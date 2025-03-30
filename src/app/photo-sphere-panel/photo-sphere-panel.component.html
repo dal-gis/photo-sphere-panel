@@ -1,0 +1,13 @@
+@if (isInitialized()) {
+
+    @for (feature of features(); track feature.id) {
+        <div class="feature-container" [style.top.px]="feature.adjustedPosition.y" [style.left.px]="feature.adjustedPosition.x" [hidden]="feature.hide">
+            <div class="feature" (click)="onFeatureClick($event, feature)">
+                <div class="feature-info">
+                    <div>{{feature.name}}</div>
+                </div>
+            </div> 
+        </div>
+    }
+
+}
