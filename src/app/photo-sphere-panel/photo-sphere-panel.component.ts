@@ -22,7 +22,6 @@ export class PhotoSpherePanelComponent implements AfterViewInit, OnDestroy {
 
   // a photo sphere is an equirectangular image
 
-  readonly image = viewChild.required<HTMLImageElement>('image');
   readonly sphere = input.required<PhotoSphere>();
 
   readonly featureClicked = output<OnPhotoSphereFeatureClicked>();
