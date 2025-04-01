@@ -1,0 +1,76 @@
+name: Deploy an Angular application to GitHub Pages
+
+on:
+
+  push:
+    branches: ["main"]
+
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+
+  build:
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    
+      - name: Checkout
+        uses: actions/checkout@v4
+    
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+  
+      - name: Retrieve repository name
+        # https://stackabuse.com/guide-to-parameter-expansion-in-bash/
+        run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+
+      - name: Build project
+        # https://stackoverflow.com/questions/78544888/angular-18-ng-build-without-browser-folder
+        run: npm run build -- --base-href=/${{ env.REPO_NAME }}/ --configuration github-page
+
+      - name: Override 404.html
+        # https://v17.angular.io/guide/deployment#deploy-to-github-pages
+        run: cp ./_site/index.html ./_site/404.html
+
+      - name: Check build
+        run: |
+          pwd
+          ls -la
+          ls -la _site/
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    runs-on: ubuntu-latest
+    
+    needs: build
+    
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
