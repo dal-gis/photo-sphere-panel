@@ -17,7 +17,7 @@ export class AppComponent {
     features: [
       {
         id: 1, 
-        name: 'Kloster Niederaltaich',
+        name: 'Niederaltaich Abbey',
         x: 2890,
         y: 3182,
       },
